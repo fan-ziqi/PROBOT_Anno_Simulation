@@ -64,7 +64,7 @@
     <parent link="base_link" />
     <child link="link_1" />
     <axis xyz="0 1 0" />
-    <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3" />
+    <limit lower="${-M_PI/2}" upper="${M_PI/2}" effort="100" velocity="3" />
   </joint>
 
   <link name="link_2">
@@ -94,7 +94,7 @@
     <parent link="link_1" />
     <child link="link_2" />
     <axis xyz="0 0 1" />
-    <limit lower="-2.0071" upper="2.0071" effort="100" velocity="3" />
+    <limit lower="${-M_PI/3}" upper="${M_PI/3}" effort="100" velocity="3" />
   </joint>
 
   <link name="link_3">
@@ -124,7 +124,7 @@
     <parent link="link_2" />
     <child link="link_3" />
     <axis xyz="0 0 1" />
-    <limit lower="-0.6981" upper="3.8397" effort="100" velocity="3" />
+    <limit lower="${-M_PI/6}" upper="${M_PI}" effort="100" velocity="3" />
   </joint>
 
   <link name="link_4">
@@ -154,7 +154,7 @@
     <parent link="link_3" />
     <child link="link_4" />
     <axis xyz="1 0 0" />
-    <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3" />
+    <limit lower="${-M_PI/2}" upper="${M_PI/2}" effort="100" velocity="3" />
   </joint>
 
   <link name="link_5">
@@ -184,7 +184,7 @@
     <parent link="link_4" />
     <child link="link_5" />
     <axis xyz="0 0 1" />
-    <limit lower="-0.7854" upper="3.9270" effort="100" velocity="3" />
+    <limit lower="${-M_PI/6}" upper="${M_PI/2}" effort="100" velocity="3" />
   </joint>
 
   <link name="link_6">
@@ -214,7 +214,7 @@
     <parent link="link_5" />
     <child link="link_6" />
     <axis xyz="0 -1 0" />
-    <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3" />
+    <limit lower="${-M_PI/2}" upper="${M_PI/2}" effort="100" velocity="3" />
   </joint>
 
   <link name="tool0"/>

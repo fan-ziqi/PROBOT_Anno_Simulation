@@ -20,7 +20,7 @@
     </physics>
 
    <model name='coke_can_box_model1'>
-      <pose frame=''>0.30 0.04 0.2165 0 0 0</pose>
+      <pose frame=''>0.30 0.1 0.2165 0 0 0</pose>
       <link name='coke_can'>
         <inertial>
           <mass>0.001</mass>
@@ -93,7 +93,7 @@
     </model>
 
    <model name='coke_can_box_model2'>
-      <pose frame=''>0.34 0 0.2165 0 0 0</pose>
+      <pose frame=''>0.35 -0.1 0.2165 0 0 0</pose>
       <link name='coke_can'>
         <inertial>
           <mass>0.001</mass>
@@ -166,7 +166,7 @@
     </model>
 
    <model name='coke_can_box_model3'>
-      <pose frame=''>0.30 -0.04 0.2165 0 0 0</pose>
+      <pose frame=''>0.4 0.1 0.2165 0 0 0</pose>
       <link name='coke_can'>
         <inertial>
           <mass>0.001</mass>

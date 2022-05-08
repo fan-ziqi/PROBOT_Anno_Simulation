@@ -32,7 +32,7 @@ GraspingDemo::GraspingDemo(ros::NodeHandle n_, float pregrasp_x, float pregrasp_
   catch (tf::TransformException &ex)
   {
     ROS_ERROR("[adventure_tf]: (wait) %s", ex.what());
-    ros::Duration(1.0).sleep();
+    ros::Duration(0.5).sleep();
   }
 
 //如果查询得到的话，就将结果保存到camera_to_robot_，保存x,y,z和四元数一共7个值
@@ -56,9 +56,9 @@ GraspingDemo::GraspingDemo(ros::NodeHandle n_, float pregrasp_x, float pregrasp_
   //让机械臂运动到初始的位置
   ros::AsyncSpinner spinner(1);
   spinner.start();
-  ros::WallDuration(3.0).sleep();
+
   //调用该函数控制机械臂运动到设定的位置
-  ROS_INFO_STREAM("Getting into the Grasping Position....");
+  ROS_INFO_STREAM("运动到初始位置");
   attainPosition(pregrasp_x, pregrasp_y, pregrasp_z);
 
   // Subscribe to input video feed and publish object location
@@ -150,42 +150,20 @@ void GraspingDemo::attainPosition(float x, float y, float z)
   target_pose1.position.y = y;
   target_pose1.position.z = z;
   armgroup.setPoseTarget(target_pose1);
-
-  /* Uncomment Following section to visualize in rviz */
-  // We can print the name of the reference frame for this robot.
-  // ROS_INFO("Reference frame: %s", armgroup.getPlanningFrame().c_str());
-
-  // We can also print the name of the end-effector link for this group.
-  // ROS_INFO("Reference frame: %s", armgroup.getEndEffectorLink().c_str());
-
-  // ROS_INFO("Group names: %s",  armgroup.getName().c_str());
-
-  /*ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
-
-   const robot_state::JointModelGroup *joint_model_group =
-  armgroup.getCurrentState()->getJointModelGroup("arm");
-
-  ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
-  visual_tools.publishAxisLabeled(target_pose1, "pose1");
-  // visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
-  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-  visual_tools.trigger();
-  visual_tools.prompt("next step");*/
-
   armgroup.move();
 }
 
 void GraspingDemo::attainObject()
 {
-  // ROS_INFO("The attain Object function called");
+  // 到达物体上方0.05m的位置
   attainPosition(obj_robot_frame.getX(), obj_robot_frame.getY(), obj_robot_frame.getZ() + 0.05);
 
-  // Open Gripper
-  ros::WallDuration(1.0).sleep();
+  // 张开夹爪
+  ros::WallDuration(0.5).sleep();
   grippergroup.setNamedTarget("open");
   grippergroup.move();
 
-  // Slide down the Object
+  // 下落夹爪0.03m
   geometry_msgs::PoseStamped currPose = armgroup.getCurrentPose();
   geometry_msgs::Pose target_pose1;
 
@@ -199,16 +177,15 @@ void GraspingDemo::attainObject()
 
 void GraspingDemo::grasp()
 {
-  // ROS_INFO("The Grasping function called");
-
-  ros::WallDuration(1.0).sleep();
+  // 闭合夹爪
+  ros::WallDuration(0.5).sleep();
   grippergroup.setNamedTarget("close");
   grippergroup.move();
 }
 
 void GraspingDemo::lift(int color)
 {
-  // ROS_INFO("The lift function called");
+  ros::WallDuration(0.5).sleep();
 
   // For getting the pose
   geometry_msgs::PoseStamped currPose = armgroup.getCurrentPose();
@@ -217,49 +194,61 @@ void GraspingDemo::lift(int color)
   target_pose1.orientation = currPose.pose.orientation;
   target_pose1.position = currPose.pose.position;
 
-  // Starting Postion after picking
-  //target_pose1.position.z = target_pose1.position.z + 0.06;
-
-
-  if(color == my_GREEN){
-    if(target_pose1.position.y < 0.06){
-      target_pose1.position.y = target_pose1.position.y + 0.06;
-    }
-    else
-    {
-      target_pose1.position.y = target_pose1.position.y - 0.06;
-    }
+  if(color == my_GREEN)
+  {
+    target_pose1.position.y = obj_robot_frame.getY() - 0.2;
   }
   else if (color == my_BLUE)
   {
-    if(target_pose1.position.y < 0.06){
-      target_pose1.position.y = target_pose1.position.y + 0.06;
-    }
-    else
-    {
-      target_pose1.position.y = target_pose1.position.y - 0.06;
-    }
+    target_pose1.position.y = obj_robot_frame.getY() + 0.2;
   }
   else if (color == my_RED)
   {
-      if(target_pose1.position.y < 0.06){
-      target_pose1.position.y = target_pose1.position.y + 0.06;
-    }
-    else
-    {
-      target_pose1.position.y = target_pose1.position.y - 0.06;
-    }
+    target_pose1.position.y = obj_robot_frame.getY() - 0.2;
   }
+
+
+
+  // if(color == my_GREEN){
+  //   if(target_pose1.position.y < 0.06){
+  //     target_pose1.position.y = target_pose1.position.y + 0.06;
+  //   }
+  //   else
+  //   {
+  //     target_pose1.position.y = target_pose1.position.y - 0.06;
+  //   }
+  // }
+  // else if (color == my_BLUE)
+  // {
+  //   if(target_pose1.position.y < 0.06){
+  //     target_pose1.position.y = target_pose1.position.y + 0.06;
+  //   }
+  //   else
+  //   {
+  //     target_pose1.position.y = target_pose1.position.y - 0.06;
+  //   }
+  // }
+  // else if (color == my_RED)
+  // {
+  //     if(target_pose1.position.y < 0.06){
+  //     target_pose1.position.y = target_pose1.position.y + 0.06;
+  //   }
+  //   else
+  //   {
+  //     target_pose1.position.y = target_pose1.position.y - 0.06;
+  //   }
+  // }
 
   armgroup.setPoseTarget(target_pose1);
   armgroup.move();
 
-  // Open Gripper
-  ros::WallDuration(1.0).sleep();
+  // 张开夹爪
+  ros::WallDuration(0.5).sleep();
   grippergroup.setNamedTarget("open");
   grippergroup.move();
 
-  target_pose1.position.z = target_pose1.position.z + 0.10;
+  // 抬起夹爪0.08m
+  target_pose1.position.z = target_pose1.position.z + 0.08;
   armgroup.setPoseTarget(target_pose1);
   armgroup.move();
 }
@@ -268,13 +257,13 @@ void GraspingDemo::goHome()
 {
   geometry_msgs::PoseStamped currPose = armgroup.getCurrentPose();
 
-  // Go to Home Position
-  attainPosition(pregrasp_x, pregrasp_y, pregrasp_z);
-  attainPosition(homePose.pose.position.x, homePose.pose.position.y, homePose.pose.position.z);
-  
-  // Close Gripper
+  // 闭合夹爪
   grippergroup.setNamedTarget("close");
   grippergroup.move();
+
+  // 回到初始位置
+  // attainPosition(pregrasp_x, pregrasp_y, pregrasp_z);
+  attainPosition(homePose.pose.position.x, homePose.pose.position.y, homePose.pose.position.z);
 }
 
 void GraspingDemo::initiateGrasping(int color)
@@ -282,13 +271,13 @@ void GraspingDemo::initiateGrasping(int color)
   //开启新的线程
   ros::AsyncSpinner spinner(1);
   spinner.start();
-  ROS_INFO_STREAM("等待一秒");
-  ros::WallDuration(1.0).sleep();
+
+  ros::WallDuration(0.5).sleep();
 
   //获取当前的位置
   homePose = armgroup.getCurrentPose();
   
-  //调用attainObject()函数使机械臂靠近目标
+  //机械臂靠近目标
   ROS_INFO_STREAM("机械臂靠近目标");
   attainObject();
 
@@ -327,9 +316,7 @@ int main(int argc, char **argv)
   GraspingDemo Grasp_Green(n, pregrasp_x, pregrasp_y, pregrasp_z, length, breadth,1);
   GraspingDemo Grasp_Red(n, pregrasp_x, pregrasp_y, pregrasp_z, length, breadth,0);
   GraspingDemo Grasp_Blue(n, pregrasp_x, pregrasp_y, pregrasp_z, length, breadth,2);
-  ROS_INFO_STREAM("等待一秒");
 
-  ros::WallDuration(1.0).sleep();
   while (ros::ok())
   {
     // Process image callback
@@ -340,7 +327,7 @@ int main(int argc, char **argv)
     Grasp_Green.initiateGrasping(my_GREEN);
 
     Grasp_Red.initiateGrasping(my_RED);
+
     return 0;
   }
-  return 0;
 }
